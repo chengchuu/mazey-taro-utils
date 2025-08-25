@@ -18,7 +18,7 @@ const pkgVersion = process.env.SCRIPTS_NPM_PACKAGE_VERSION || process.env.VERSIO
 const debugMode = process.env.SCRIPTS_NPM_PACKAGE_DEBUG;
 const banner =
   "/*!\n" +
-  ` * mazey-taro-utils v${pkgVersion} https://github.com/mazeyqian/mazey-taro-utils\n` +
+  ` * mazey-taro-utils v${pkgVersion} https://github.com/chengchuu/mazey-taro-utils\n` +
   ` * (c) 2018-${new Date().getFullYear()} Cheng\n` +
   " * Released under the MIT License.\n" +
   " */";

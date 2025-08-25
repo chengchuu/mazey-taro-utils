@@ -1,7 +1,7 @@
 {
   "name": "mazey-taro-utils",
-  "version": "1.0.2",
-  "description": "Mazey's Taro utils.",
+  "version": "1.0.3",
+  "description": "Taro utils.",
   "main": "lib/index.cjs.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mazeyqian/mazey-taro-utils.git"
+    "url": "git+https://github.com/chengchuu/mazey-taro-utils.git"
   },
   "keywords": [
     "taro",
@@ -35,13 +35,13 @@
   "author": {
     "name": "Cheng",
     "email": "mazeyqian@gmail.com",
-    "url": "https://github.com/mazeyqian"
+    "url": "https://github.com/chengchuu"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mazeyqian/mazey-taro-utils/issues"
+    "url": "https://github.com/chengchuu/mazey-taro-utils/issues"
   },
-  "homepage": "https://github.com/mazeyqian/mazey-taro-utils#readme",
+  "homepage": "https://github.com/chengchuu/mazey-taro-utils#readme",
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/plugin-proposal-class-properties": "^7.18.6",

@@ -6,7 +6,7 @@
 [npm-image]: https://img.shields.io/npm/v/mazey-taro-utils
 [npm-url]: https://npmjs.org/package/mazey-taro-utils
 [l-image]: https://img.shields.io/npm/l/mazey-taro-utils
-[l-url]: https://github.com/mazeyqian/mazey-taro-utils
+[l-url]: https://github.com/chengchuu/mazey-taro-utils
 
 Mazey's Taro utils.
 
@@ -306,4 +306,4 @@ npm run test
 
 ## License
 
-This software is released under the terms of the [MIT license](https://github.com/mazeyqian/mazey-taro-utils/blob/main/LICENSE).
+This software is released under the terms of the [MIT license](https://github.com/chengchuu/mazey-taro-utils/blob/main/LICENSE).

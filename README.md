@@ -8,7 +8,7 @@
 [l-image]: https://img.shields.io/npm/l/mazey-taro-utils
 [l-url]: https://github.com/chengchuu/mazey-taro-utils
 
-Mazey's Taro utils.
+Taro utils.
 
 ## Install
 

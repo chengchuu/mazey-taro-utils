@@ -1,18 +1,18 @@
 name: Publish npm Packages
 
 env:
-  NODE_VERSION: '20'
-  PROJECT_NAME: 'mazey-taro-utils'
+  NODE_VERSION: "20"
+  PROJECT_NAME: "mazey-taro-utils"
 
 on:
   push:
     branches:
       - main
-      - 'release/v*'
+      - "release/v*"
   pull_request:
     branches:
       - main
-      - 'release/v*'
+      - "release/v*"
   workflow_dispatch:
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: 'https://registry.npmjs.org/'
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
         run: npm install

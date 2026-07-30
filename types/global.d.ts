@@ -1,14 +1,21 @@
-/**
- * @author Cheng
- */
+export {};
 
-// / <reference types="@tarojs/taro" />
-
-declare namespace NodeJS {
-  interface ProcessEnv {
-    /** NODE 内置环境变量, 会影响到最终构建生成产物 */
-    NODE_ENV: "development" | "production",
-    /** 当前构建的平台 */
-    TARO_ENV: "weapp" | "swan" | "alipay" | "h5" | "rn" | "tt" | "quickapp" | "qq" | "jd",
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      /** Node environment used by the build output. */
+      NODE_ENV?: "development" | "production";
+      /** Current Taro build platform. */
+      TARO_ENV?:
+        | "weapp"
+        | "swan"
+        | "alipay"
+        | "h5"
+        | "rn"
+        | "tt"
+        | "quickapp"
+        | "qq"
+        | "jd";
+    }
   }
 }

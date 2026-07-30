@@ -1,6 +1,6 @@
 {
   "name": "mazey-taro-utils",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Taro helpers for environment detection, navigation, login, scrolling, toasts, page parameters, and device information.",
   "main": "lib/index.cjs.js",
   "module": "lib/index.esm.js",

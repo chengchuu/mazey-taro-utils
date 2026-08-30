@@ -11,7 +11,7 @@ importers:
         specifier: ^3.6.0
         version: 3.6.40(@tarojs/helper@3.6.40)(@tarojs/runtime@3.6.40(@tarojs/shared@3.6.40))(@types/react@19.2.18)(postcss@8.5.26)
       mazey:
-        specifier: ^5.6.0
+        specifier: ^5.9.1
         version: 5.9.1
     devDependencies:
       "@babel/core":

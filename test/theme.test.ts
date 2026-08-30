@@ -81,7 +81,7 @@ test("applies a session preference when storage rejects the write", () => {
 });
 
 test("keeps a fixed URL preference authoritative", () => {
-  history.replaceState({}, "", "/?theme=dark");
+  history.replaceState({}, "", `/?${storageKey}=dark`);
   const stop = initializeThemeControls(storageKey);
   const select = document.querySelector<HTMLSelectElement>(
     "[data-theme-select]",

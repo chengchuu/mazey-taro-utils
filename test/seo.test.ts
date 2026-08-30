@@ -15,6 +15,8 @@ import {
   transformApiHtml,
 } from "../scripts/build-pages.mjs";
 import {
+  attribute,
+  jsonLdBlocks,
   localFragmentError,
   localFragmentErrors,
 } from "../scripts/validate-seo.mjs";
@@ -30,6 +32,42 @@ function expectNavigationLabel(html, label) {
 
   expect(html).toMatch(new RegExp(`>\\s*${escapedLabel}\\s*</a>`));
 }
+
+test.each([
+  ['<meta name="description" content="Quoted value">', "Quoted value"],
+  [
+    "<meta name='description' content='Single-quoted value'>",
+    "Single-quoted value",
+  ],
+  ["<meta name=description content=Unquoted-value>", "Unquoted-value"],
+])("reads HTML attributes from %s", (html, expected) => {
+  expect(attribute(html, "meta", "name", "description")?.content).toBe(
+    expected,
+  );
+});
+
+test("reads boolean and unquoted attributes from minified HTML", () => {
+  expect(
+    attribute(
+      "<button aria-expanded=false data-nav-toggle>",
+      "button",
+      "aria-expanded",
+      "false",
+    ),
+  ).toMatchObject({
+    "aria-expanded": "false",
+    "data-nav-toggle": "",
+  });
+});
+
+test.each([
+  ['<script type="application/ld+json">{"url":"quoted"}</script>', "quoted"],
+  ['<script type=application/ld+json>{"url":"unquoted"}</script>', "unquoted"],
+])("reads JSON-LD from %s", (html, expectedUrl) => {
+  expect(jsonLdBlocks(html).map((block) => JSON.parse(block).url)).toEqual([
+    expectedUrl,
+  ]);
+});
 
 test("site navigation and hero styling follow the shared template convention", () => {
   const homeHtml = readFileSync(

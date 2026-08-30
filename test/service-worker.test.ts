@@ -20,6 +20,7 @@ import {
 } from "../scripts/build-pages.mjs";
 import {
   hasPwaRuntimeReference,
+  htmlAttributes,
   manifestMetadataFailures,
   pngDimensions,
   validatePwa,
@@ -36,6 +37,17 @@ const apiAssets = [
   `${projectConfig.site.basePath}api/assets/main.js`,
   `${projectConfig.site.basePath}api/assets/style.css`,
 ];
+
+test.each([
+  ['<link rel="manifest" href="/quoted.webmanifest">', "/quoted.webmanifest"],
+  ["<link rel='manifest' href='/single.webmanifest'>", "/single.webmanifest"],
+  ["<link rel=manifest href=/unquoted.webmanifest>", "/unquoted.webmanifest"],
+])("reads PWA attributes from %s", (html, expectedHref) => {
+  expect(htmlAttributes(html)).toMatchObject({
+    href: expectedHref,
+    rel: "manifest",
+  });
+});
 
 function evaluateWorker({ discoveredApiAssets = [] } = {}) {
   const listeners = {};

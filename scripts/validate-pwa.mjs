@@ -63,9 +63,13 @@ function pngDimensions(file) {
 
 function htmlAttributes(tag) {
   return Object.fromEntries(
-    [...tag.matchAll(/([:\w-]+)(?:=["']([^"']*)["'])?/g)].map((match) => [
+    [
+      ...tag.matchAll(
+        /([:\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g,
+      ),
+    ].map((match) => [
       match[1].toLowerCase(),
-      match[2] ?? "",
+      match[2] ?? match[3] ?? match[4] ?? "",
     ]),
   );
 }
@@ -335,6 +339,7 @@ if (
 
 export {
   hasPwaRuntimeReference,
+  htmlAttributes,
   manifestMetadataFailures,
   pngDimensions,
   validatePwa,

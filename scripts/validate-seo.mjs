@@ -21,9 +21,12 @@ function matches(html, expression) {
 
 function attributes(tag) {
   return Object.fromEntries(
-    matches(tag, /([:\w-]+)(?:=["']([^"']*)["'])?/g).map((item) => [
+    matches(
+      tag,
+      /([:\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g,
+    ).map((item) => [
       item[1].toLowerCase(),
-      item[2] ?? "",
+      item[2] ?? item[3] ?? item[4] ?? "",
     ]),
   );
 }
@@ -97,11 +100,15 @@ function validateHeadingOrder(label, html) {
   }
 }
 
-function validateJsonLd(label, html, expectedUrl) {
-  const blocks = matches(
-    html,
-    /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi,
+function jsonLdBlocks(html) {
+  return matches(html, /(<script\b[^>]*>)([\s\S]*?)<\/script>/gi).flatMap(
+    (match) =>
+      attributes(match[1]).type === "application/ld+json" ? [match[2]] : [],
   );
+}
+
+function validateJsonLd(label, html, expectedUrl) {
+  const blocks = jsonLdBlocks(html);
   if (blocks.length !== 1) {
     fail(
       `${label}: expected exactly one JSON-LD block, found ${blocks.length}`,
@@ -109,7 +116,7 @@ function validateJsonLd(label, html, expectedUrl) {
     return;
   }
   try {
-    const data = JSON.parse(blocks[0][1]);
+    const data = JSON.parse(blocks[0]);
     if (data.url !== expectedUrl)
       fail(`${label}: JSON-LD url must be ${expectedUrl}`);
   } catch (error) {
@@ -280,7 +287,13 @@ function validatePage({
     fail(`${label}: missing accessible theme selector`);
   if (
     requireNavigationToggle &&
-    !/<button\b[^>]*aria-expanded="false"[^>]*data-nav-toggle/.test(html)
+    !matches(html, /<button\b[^>]*>/gi).some((match) => {
+      const values = attributes(match[0]);
+      return (
+        values["aria-expanded"] === "false" &&
+        Object.hasOwn(values, "data-nav-toggle")
+      );
+    })
   )
     fail(`${label}: missing collapsed mobile navigation control`);
   return {
@@ -538,6 +551,7 @@ if (
 
 export {
   attribute,
+  jsonLdBlocks,
   localFragmentError,
   localFragmentErrors,
   validateSite,

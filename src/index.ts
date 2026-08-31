@@ -2,14 +2,20 @@
  * @author Cheng
  */
 import {
-  showToast, getWindowInfo, getSystemInfoSync, getCurrentInstance,
-  navigateTo, redirectTo, login, pageScrollTo,
+  showToast,
+  getWindowInfo,
+  getSystemInfoSync,
+  getCurrentInstance,
+  navigateTo,
+  redirectTo,
+  login,
+  pageScrollTo,
 } from "@tarojs/taro";
 import { convertObjectToQuery, getBrowserInfo } from "mazey";
 
 /**
  * ZH: 获取当前页面的路径。
- * 
+ *
  * EN: Get the path of the current page.
  */
 export const getCurrentPage = () => {
@@ -22,14 +28,14 @@ export const getCurrentPage = () => {
     const arr = page.split("?");
     if (arr.length === 2 && arr[0]) {
       page = arr[0];
-    } 
+    }
   }
   return page;
 };
 
 /**
  * ZH: 获取当前页面的所有参数。
- * 
+ *
  * EN: Get all params of the current page.
  */
 export const getAllParams = () => {
@@ -42,7 +48,7 @@ export const getAllParams = () => {
 
 /**
  * ZH: 获取当前路径（Taro）的查询参数的值。
- * 
+ *
  * EN: Get the query param's value of the current path(Taro).
  */
 export const getQueryParam = (name: string) => {
@@ -52,7 +58,7 @@ export const getQueryParam = (name: string) => {
 
 /**
  * ZH: 获取当前窗口的尺寸。
- * 
+ *
  * EN: Get the size of the current window.
  */
 export const getWindowSize = () => {
@@ -69,7 +75,7 @@ export const getWindowSize = () => {
 
 /**
  * ZH: 获取当前系统信息，如 "iOS 14.4"。
- * 
+ *
  * EN: Get the current system information.
  */
 export const getSystem = () => {
@@ -79,7 +85,7 @@ export const getSystem = () => {
 
 /**
  * ZH: 获取当前构建的平台，如 weapp、swan、alipay、h5、rn、tt、quickapp、qq、jd。
- * 
+ *
  * EN: Get the current platform, such as weapp, swan, alipay, h5, rn, tt, quickapp, qq, jd.
  */
 export const getEnv = (): string => {
@@ -88,9 +94,9 @@ export const getEnv = (): string => {
 
 /**
  * ZH: 调用接口获取登录凭证（code）。
- * 
+ *
  * EN: Call the interface to get the login credential (code).
- * 
+ *
  * @see https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/wx.login.html
  */
 export const getLoginCodeAsync = async () => {
@@ -113,7 +119,7 @@ export const getLoginCodeAsync = async () => {
 
 /**
  * ZH: 是否是微信小程序环境。
- * 
+ *
  * EN: Is it a WeChat Mini Program environment.
  */
 export const isMiniProgram = (): boolean => {
@@ -129,7 +135,7 @@ export const isWeapp = (): boolean => {
 
 /**
  * ZH: 是否是浏览器环境。
- * 
+ *
  * EN: Is it a browser environment.
  */
 export const isBrowser = (): boolean => {
@@ -152,7 +158,7 @@ export const isH5 = (): boolean => {
 
 /**
  * ZH: 是否是 PC 端浏览器环境。
- * 
+ *
  * EN: Is it a PC browser environment.
  */
 export const isPC = (): boolean => {
@@ -167,7 +173,7 @@ export const isPC = (): boolean => {
 
 /**
  * ZH: 是否是宽屏设备。
- * 
+ *
  * EN: Is it a wide screen device.
  */
 export const isWideScreen = (): boolean => {
@@ -187,7 +193,7 @@ export const isMiddleScreen = (): boolean => {
 
 /**
  * ZH: 是否是长屏设备。
- * 
+ *
  * EN: Is it a long screen device.
  */
 export const isLongScreen = (): boolean => {
@@ -200,7 +206,7 @@ export const isLongScreen = (): boolean => {
 
 /**
  * ZH: 是否是 iOS 系统。
- * 
+ *
  * EN: Is it an iOS system.
  */
 export const isIOS = (): boolean => {
@@ -213,7 +219,7 @@ export const isIOS = (): boolean => {
 
 /**
  * ZH: 是否是 Android 系统。
- * 
+ *
  * EN: Is it an Android system.
  */
 export const isAndroid = (): boolean => {
@@ -226,7 +232,7 @@ export const isAndroid = (): boolean => {
 
 /**
  * ZH: 快速显示一个 Toast 提示。
- * 
+ *
  * EN: Quickly show a Toast.
  */
 export const quickToast = (msg: string): void => {
@@ -238,7 +244,7 @@ export const quickToast = (msg: string): void => {
 
 /**
  * ZH: 快速跳转到指定页面。
- * 
+ *
  * EN: Quickly navigate to a page.
  */
 export const quickNavigateTo = (page: string, { params = {} } = {}): void => {
@@ -250,7 +256,7 @@ export const quickNavigateTo = (page: string, { params = {} } = {}): void => {
 
 /**
  * ZH: 快速重定向到指定页面。
- * 
+ *
  * EN: Quickly redirect to a page.
  */
 export const quickRedirectTo = (page: string, { params = {} } = {}): void => {
@@ -262,7 +268,7 @@ export const quickRedirectTo = (page: string, { params = {} } = {}): void => {
 
 /**
  * ZH: 快速滚动到指定元素。
- * 
+ *
  * EN: Quickly scroll to a specified element.
  */
 export const quickScrollTo = (selector: string, duration = 300): void => {

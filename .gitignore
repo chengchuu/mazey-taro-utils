@@ -1,6 +1,10 @@
 # Output folders
 node_modules/
 dist/
+dist-dev/
+docs/
+.pages-api/
+coverage/
 test/unit/coverage
 test/e2e/reports
 lib/

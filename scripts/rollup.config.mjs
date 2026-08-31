@@ -1,125 +1,140 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
-import { babel } from "@rollup/plugin-babel";
-import commonjs from "@rollup/plugin-commonjs";
-import rollupTypescript from "rollup-plugin-typescript2";
 import { DEFAULT_EXTENSIONS } from "@babel/core";
-import cleaner from "rollup-plugin-cleaner";
+import { babel } from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
+import { rmSync } from "node:fs";
+import { createRequire } from "node:module";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { dts } from "rollup-plugin-dts";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 
+const require = createRequire(import.meta.url);
+const pkg = require("../package.json");
+const { packageDetails } = require("./project-config-utils.js");
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const _resolve = (_path) => path.resolve(__dirname, _path);
-const pkgVersion = process.env.SCRIPTS_NPM_PACKAGE_VERSION || process.env.VERSION || "unknown";
+const resolveFromScripts = (relativePath) =>
+  path.resolve(__dirname, relativePath);
+const packageConfig = packageDetails(pkg);
+const packageVersion =
+  process.env.SCRIPTS_NPM_PACKAGE_VERSION || process.env.VERSION || "unknown";
 const debugMode = process.env.SCRIPTS_NPM_PACKAGE_DEBUG;
+const input = resolveFromScripts("../src/index.ts");
+const external = ["@tarojs/taro", "mazey"];
 const banner =
   "/*!\n" +
-  ` * mazey-taro-utils v${pkgVersion} https://github.com/chengchuu/mazey-taro-utils\n` +
-  ` * (c) 2018-${new Date().getFullYear()} Cheng\n` +
-  " * Released under the MIT License.\n" +
+  ` * ${packageConfig.name} v${packageVersion} ${pkg.repository.url.replace(/^git\\+/, "").replace(/\\.git$/, "")}\n` +
+  ` * (c) 2018-${new Date().getFullYear()} ${packageConfig.author.name || packageConfig.name}\n` +
+  ` * Released under the ${packageConfig.license || "MIT"} License.\n` +
   " */";
+
+const clean = () => ({
+  name: "clean-lib",
+  buildStart() {
+    rmSync(resolveFromScripts("../lib"), { recursive: true, force: true });
+  },
+});
+
 const plugins = [
-  rollupTypescript(),
-  commonjs({
-    include: /node_modules/,
+  typescript({
+    compilerOptions: {
+      declaration: false,
+      declarationMap: false,
+    },
   }),
   babel({
-    babelHelpers: "runtime",
-    // Just convert the source code, don't run external dependencies.
+    babelHelpers: "bundled",
     exclude: "**/node_modules/**",
-    // Babel does not support TypeScript by default; it needs to be manually added.
-    extensions: [
-      ...DEFAULT_EXTENSIONS,
-      ".ts",
-    ],
+    extensions: [...DEFAULT_EXTENSIONS, ".ts"],
   }),
 ];
-const iifePlugins = [];
-const dTsConf = {
-  input: _resolve("../src/typing.d.ts"),
-  // https://rollupjs.org/guide/en/#outputformat
-  output: [
-    {
-      file: _resolve("../lib/typing.d.ts"),
-      format: "es",
-    },
-  ],
-  plugins: [
-    dts(),
-  ],
-  external: [],
-};
-const gTsConf = {
-  input: _resolve("../types/global.d.ts"),
-  output: [
-    {
-      file: _resolve("../lib/global.d.ts"),
-      format: "es",
-    },
-  ],
-  plugins: [
-    dts(),
-  ],
-  external: [],
-};
+const minify = [];
 
 if (debugMode !== "open") {
-  iifePlugins.push(
-    // Add minification.
-    // https://github.com/TrySound/rollup-plugin-terser
-    terser({ // https://github.com/terser/terser
+  minify.push(
+    terser({
       format: {
-        // https://github.com/terser/terser#format-options
-        comments: /^!\n\s\*\smazey-taro-utils/,
+        comments: /^!\n\s\*/,
       },
     }),
   );
 }
 
-// https://rollupjs.org/guide/en/
 export default [
   {
-    input: _resolve("../src/index.ts"),
-    // https://rollupjs.org/guide/en/#outputformat
+    input,
     output: [
       {
-        file: _resolve("../lib/index.cjs.js"),
+        file: resolveFromScripts("../lib/index.cjs.js"),
         format: "cjs",
         banner,
-        plugins: iifePlugins,
+        sourcemap: true,
+        plugins: minify,
       },
       {
-        file: _resolve("../lib/index.esm.js"),
+        file: resolveFromScripts("../lib/index.esm.js"),
         format: "esm",
         banner,
-        plugins: iifePlugins,
-      },
-      {
-        file: _resolve("../lib/mazey-taro-utils.min.js"),
-        format: "iife",
-        name: "mazey_taro_utils",
-        banner,
-        plugins: iifePlugins,
-        globals: {
-          "@tarojs/taro": "taro",
-          "mazey": "mazey",
-        },
+        sourcemap: true,
+        plugins: minify,
       },
     ],
-    plugins: [
-      ...plugins,
-      cleaner({
-        targets: [
-          _resolve("../lib/"),
-        ],
-      }),
-    ],
-    external: [ "@tarojs/taro", "mazey" ],
+    plugins: [clean(), ...plugins],
+    external,
   },
-  dTsConf,
-  gTsConf,
+  {
+    input,
+    output: [
+      {
+        file: resolveFromScripts(
+          `../lib/${packageConfig.bundleBaseName}.min.js`,
+        ),
+        format: "iife",
+        name: packageConfig.iifeGlobal,
+        banner,
+        globals: {
+          "@tarojs/taro": "Taro",
+          mazey: "mazey",
+        },
+        sourcemap: true,
+        plugins: minify,
+      },
+    ],
+    plugins,
+    external,
+  },
+  {
+    input,
+    output: [
+      {
+        file: resolveFromScripts("../lib/index.d.ts"),
+        format: "es",
+        banner: '/// <reference path="./global.d.ts" />',
+      },
+    ],
+    plugins: [dts()],
+    external,
+  },
+  {
+    input: resolveFromScripts("../src/typing.d.ts"),
+    output: [
+      {
+        file: resolveFromScripts("../lib/typing.d.ts"),
+        format: "es",
+      },
+    ],
+    plugins: [dts()],
+    external,
+  },
+  {
+    input: resolveFromScripts("../types/global.d.ts"),
+    output: [
+      {
+        file: resolveFromScripts("../lib/global.d.ts"),
+        format: "es",
+      },
+    ],
+    plugins: [dts()],
+    external,
+  },
 ];

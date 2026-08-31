@@ -109,7 +109,7 @@
     "webpack-dev-server": "^6.0.0"
   },
   "dependencies": {
-    "@tarojs/taro": "^3.6.0",
+    "@tarojs/taro": "^4.2.1",
     "mazey": "^5.9.1"
   }
 }

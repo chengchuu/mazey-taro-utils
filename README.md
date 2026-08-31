@@ -135,7 +135,7 @@ dependencies remain external to the package bundle.
 Use Node.js 22 for the repository tooling.
 
 ```shell
-npm install
+pnpm install
 npm run typecheck
 npm run lint
 npm test

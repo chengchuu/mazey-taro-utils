@@ -214,7 +214,7 @@ local theme preference, and the developer machine's window size.
 
 Use Node.js 22 for repository tooling. The repository tracks `pnpm-lock.yaml` and ignores
 `package-lock.json`. Use pnpm for local dependency changes, but run the documented project scripts
-through npm. GitHub Actions installs with `npm install`.
+through npm. GitHub Actions installs the frozen lockfile with `pnpm install --frozen-lockfile`.
 
 The README and Pages workflow use Node.js 22. The npm publishing workflow currently declares
 Node.js 20. Preserve that observed difference unless a workflow task explicitly changes and

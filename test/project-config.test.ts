@@ -1,6 +1,13 @@
 /** @jest-environment node */
 
+import { readFileSync } from "node:fs";
+
 import projectConfig from "../project.config.js";
+
+const workflowInstallCounts = new Map([
+  [".github/workflows/pages.yml", 1],
+  [".github/workflows/publish-npm.yml", 2],
+]);
 
 test("central configuration derives package and Pages identity", () => {
   expect(projectConfig.package.name).toBe("mazey-taro-utils");
@@ -23,4 +30,23 @@ test("central configuration derives package and Pages identity", () => {
     "logo-512x512.png",
     "logo-maskable-512x512.png",
   ]);
+});
+
+test("workflows install the frozen pnpm dependency graph", () => {
+  for (const [workflowPath, expectedInstallCount] of workflowInstallCounts) {
+    const workflow = readFileSync(workflowPath, "utf8");
+    const setupSteps = workflow.match(
+      /- name: Setup pnpm\n\s+uses: pnpm\/action-setup@v6\n\s+with:\n\s+version: 10\.26\.2/gu,
+    );
+    const installSteps = workflow.match(
+      /- name: Install dependencies\n\s+run: pnpm install --frozen-lockfile/gu,
+    );
+
+    expect(setupSteps).toHaveLength(expectedInstallCount);
+    expect(installSteps).toHaveLength(expectedInstallCount);
+    expect(workflow).not.toMatch(
+      /^\s+run:\s*(?:\|\s*)?(?:\r?\n\s*)?npm install\b/mu,
+    );
+    expect(workflow).not.toContain("legacy-peer-deps");
+  }
 });

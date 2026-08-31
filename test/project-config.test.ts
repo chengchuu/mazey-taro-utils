@@ -32,21 +32,24 @@ test("central configuration derives package and Pages identity", () => {
   ]);
 });
 
-test("workflows install the frozen pnpm dependency graph", () => {
+test("workflows install with npm without package-manager bootstrapping", () => {
+  const packageMetadata = JSON.parse(readFileSync("package.json", "utf8")) as {
+    packageManager?: unknown;
+  };
+
+  expect(packageMetadata.packageManager).toBeUndefined();
+
   for (const [workflowPath, expectedInstallCount] of workflowInstallCounts) {
     const workflow = readFileSync(workflowPath, "utf8");
-    const setupSteps = workflow.match(
-      /- name: Setup pnpm\n\s+uses: pnpm\/action-setup@v6\n\s+with:\n\s+version: 10\.26\.2/gu,
-    );
     const installSteps = workflow.match(
-      /- name: Install dependencies\n\s+run: pnpm install --frozen-lockfile/gu,
+      /- name: Install dependencies\n\s+run: npm install/gu,
     );
 
-    expect(setupSteps).toHaveLength(expectedInstallCount);
     expect(installSteps).toHaveLength(expectedInstallCount);
-    expect(workflow).not.toMatch(
-      /^\s+run:\s*(?:\|\s*)?(?:\r?\n\s*)?npm install\b/mu,
-    );
+    expect(workflow).not.toContain("pnpm/action-setup");
+    expect(workflow).not.toContain("corepack");
+    expect(workflow).not.toMatch(/^\s+run:\s*npm ci\b/mu);
     expect(workflow).not.toContain("legacy-peer-deps");
+    expect(workflow).not.toMatch(/^\s+cache:/mu);
   }
 });

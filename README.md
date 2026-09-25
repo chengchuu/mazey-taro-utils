@@ -18,8 +18,6 @@ page parameters, and device information.
 npm install mazey-taro-utils
 ```
 
-The package uses `@tarojs/taro` and `mazey` at runtime.
-
 ## Quick start
 
 Import helpers from the package root:
@@ -135,7 +133,7 @@ dependencies remain external to the package bundle.
 Use Node.js 22 for the repository tooling.
 
 ```shell
-npm install
+pnpm install
 npm run typecheck
 npm run lint
 npm test

@@ -242,12 +242,15 @@ function validatePwa({ rootDir = defaultRoot } = {}) {
       )
     )
       fail(`${label} is missing an accessible Install app button`);
-    if (
-      !/<button\b[^>]*data-pwa-update-now[^>]*>[\s\S]*?Update now[\s\S]*?<\/button>/i.test(
-        html,
-      )
-    )
-      fail(`${label} is missing an accessible Update now button`);
+    for (const forbidden of [
+      "data-pwa-update",
+      "data-pwa-update-now",
+      "pwa-update-notice",
+      "site-pwa-update",
+    ]) {
+      if (html.includes(forbidden))
+        fail(`${label} contains removed update UI: ${forbidden}`);
+    }
     if (!/data-pwa-status[^>]*|[^>]*data-pwa-status/.test(html))
       fail(`${label} is missing a PWA live status region`);
     const hiddenHelpBlocks = [
@@ -257,6 +260,21 @@ function validatePwa({ rootDir = defaultRoot } = {}) {
     ];
     if (hiddenHelpBlocks.some((match) => /data-pwa-status/.test(match[2])))
       fail(`${label} hides its PWA live status region in installed mode`);
+  }
+
+  for (const file of filesIn(docs).filter((entry) => entry.endsWith(".html"))) {
+    const html = readFileSync(file, "utf8");
+    for (const forbidden of [
+      "data-pwa-update",
+      "data-pwa-update-now",
+      "pwa-update-notice",
+      "site-pwa-update",
+    ]) {
+      if (html.includes(forbidden))
+        fail(
+          `${path.relative(docs, file)} contains removed update UI: ${forbidden}`,
+        );
+    }
   }
 
   if (!existsSync(workerFile)) fail("Service worker is missing from docs");
@@ -282,8 +300,8 @@ function validatePwa({ rootDir = defaultRoot } = {}) {
       fail("Service worker must ignore non-GET requests");
     if (!worker.includes("url.origin === self.location.origin"))
       fail("Service worker must ignore cross-origin requests");
-    if (!worker.includes('event.data?.type === "SKIP_WAITING"'))
-      fail("Service worker updates must require an explicit message");
+    if (/SKIP_WAITING|skipWaiting\s*\(/.test(worker))
+      fail("Service worker contains forced update activation");
     const apiIndex = path.join(docs, "api", "index.html");
     if (existsSync(apiIndex)) {
       const apiAssets = apiAppShellAssets(readFileSync(apiIndex, "utf8"));

@@ -113,10 +113,7 @@ test("site navigation and hero styling follow the shared template convention", (
     'href="../#website-app-help">Website app help</a>',
   );
   for (const html of [homeHtml, playgroundHtml]) {
-    expect(html).toContain('class="pwa-update-notice"');
-    expect(html).toContain(
-      'class="btn btn-primary btn-sm" type="button" data-pwa-update-now',
-    );
+    expect(html).not.toMatch(/data-pwa-update|pwa-update-notice/);
   }
   expect(homeHtml).toContain('class="copy-status"');
   expect(homeHtml).toContain('class="pwa-status"');
@@ -372,11 +369,10 @@ test("Pages assembly is repeatable without duplicating API metadata", () => {
         new RegExp(`${projectConfig.site.markerPrefix}-seo:start`, "g"),
       ),
     ).toHaveLength(1);
-    expect(
-      second.match(
-        new RegExp(`${projectConfig.site.markerPrefix}-pwa-ui:start`, "g"),
-      ),
-    ).toHaveLength(1);
+    expect(second).not.toContain(
+      `${projectConfig.site.markerPrefix}-pwa-ui:start`,
+    );
+    expect(second.match(/data-pwa-status/g)).toHaveLength(1);
     expect(firstWorker).not.toMatch(/__PWA_[A-Z_]+__/);
   } finally {
     rmSync(rootDir, { recursive: true, force: true });

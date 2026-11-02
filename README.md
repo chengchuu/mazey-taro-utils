@@ -18,8 +18,6 @@ page parameters, and device information.
 npm install mazey-taro-utils
 ```
 
-The package uses `@tarojs/taro` and `mazey` at runtime.
-
 ## Quick start
 
 Import helpers from the package root:

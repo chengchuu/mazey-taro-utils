@@ -102,7 +102,7 @@ There is no application-wide React store. State ownership is intentionally local
   `sessionOnlyPreference`. The resolved theme is reflected through root data attributes, CSS
   `color-scheme`, theme-color metadata, TypeDoc storage, and every `[data-theme-select]` control.
 - PWA install state lives in the `initializeInstallExperience()` closure as `deferredPrompt`.
-  Service-worker update state lives in `registerSiteServiceWorker()` as `reloadRequested`.
+  Service-worker registration leaves update activation to the browser's normal lifecycle.
 - Navigation state is owned by Bootstrap Collapse plus a per-navbar `restoreFocus` closure.
 - DOM data attributes such as `data-theme-controls-ready`, `data-navigation-ready`, and
   `data-pwa-ready` prevent duplicate initialization.
@@ -186,8 +186,8 @@ virtualization, or another state library.
   own DOM mutation, accessible controls, browser metadata, and update policy.
 - Keep navigation progressively enhanced. Links must remain available if Bootstrap JavaScript does
   not initialize, and Escape handling must restore focus after the mobile menu closes.
-- Keep service-worker activation user-controlled. Do not reload a playground session merely because
-  an update becomes available.
+- Let service-worker updates activate through the browser's normal lifecycle. Do not display an
+  update prompt or reload a playground session when an update becomes available.
 - Derive names, URLs, storage keys, base paths, SEO values, and PWA values from `project.config.js`.
   Do not duplicate them in React or site modules.
 - Avoid new runtime dependencies without checking the package externals, IIFE globals, declarations,

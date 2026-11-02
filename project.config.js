@@ -7,6 +7,7 @@ const {
   repositoryDetails,
 } = require("./scripts/project-config-utils");
 
+const shortName = "Taro Utils";
 const packageConfig = packageDetails(pkg);
 const repository = repositoryDetails(pkg.repository);
 const siteUrl = new URL(pkg.homepage);
@@ -112,7 +113,7 @@ module.exports = deepFreeze({
   repository,
   brand: {
     displayName,
-    shortName: "Taro Utils",
+    shortName,
   },
   urls: {
     github: githubUrl,
@@ -156,7 +157,7 @@ module.exports = deepFreeze({
   },
   pwa: {
     name: `${displayName} Documentation`,
-    shortName: "Taro Utils",
+    shortName,
     display: "standalone",
     backgroundColor: theme.colorLight,
     themeColor: theme.colorPrimary,

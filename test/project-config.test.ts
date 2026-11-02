@@ -1,6 +1,13 @@
 /** @jest-environment node */
 
+import { readFileSync } from "node:fs";
+
 import projectConfig from "../project.config.js";
+
+const workflowInstallCounts = new Map([
+  [".github/workflows/pages.yml", 1],
+  [".github/workflows/publish-npm.yml", 2],
+]);
 
 test("central configuration derives package and Pages identity", () => {
   expect(projectConfig.package.name).toBe("mazey-taro-utils");
@@ -23,4 +30,26 @@ test("central configuration derives package and Pages identity", () => {
     "logo-512x512.png",
     "logo-maskable-512x512.png",
   ]);
+});
+
+test("workflows install with npm without package-manager bootstrapping", () => {
+  const packageMetadata = JSON.parse(readFileSync("package.json", "utf8")) as {
+    packageManager?: unknown;
+  };
+
+  expect(packageMetadata.packageManager).toBeUndefined();
+
+  for (const [workflowPath, expectedInstallCount] of workflowInstallCounts) {
+    const workflow = readFileSync(workflowPath, "utf8");
+    const installSteps = workflow.match(
+      /- name: Install dependencies\n\s+run: npm install/gu,
+    );
+
+    expect(installSteps).toHaveLength(expectedInstallCount);
+    expect(workflow).not.toContain("pnpm/action-setup");
+    expect(workflow).not.toContain("corepack");
+    expect(workflow).not.toMatch(/^\s+run:\s*npm ci\b/mu);
+    expect(workflow).not.toContain("legacy-peer-deps");
+    expect(workflow).not.toMatch(/^\s+cache:/mu);
+  }
 });

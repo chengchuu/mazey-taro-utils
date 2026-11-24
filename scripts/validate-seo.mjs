@@ -1,10 +1,12 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { createRequire } from "node:module";
 import path, { dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import projectConfig from "../project.config.js";
 import { pngDimensions } from "./validate-pwa.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 const sitePages = projectConfig.site.pages;
 
 const root = path.resolve(__dirname, "..");
@@ -407,13 +409,16 @@ function validateStaticFiles() {
       );
   }
   const homeCss = path.join(docs, "assets", "shared.css");
-  if (
-    existsSync(homeCss) &&
-    !/Bootstrap\s+v5\.3\.8/.test(readFileSync(homeCss, "utf8"))
-  )
-    fail(
-      "assets/shared.css: Bootstrap 5.3.8 was not included in the site build",
-    );
+  if (existsSync(homeCss)) {
+    const { version: installedVersion } = require("bootstrap/package.json");
+    const bundledVersion = readFileSync(homeCss, "utf8").match(
+      /Bootstrap\s+v([^\s*]+)/,
+    )?.[1];
+    if (bundledVersion !== installedVersion)
+      fail(
+        `assets/shared.css: expected Bootstrap ${installedVersion}, found ${bundledVersion ?? "no Bootstrap version banner"}`,
+      );
+  }
 
   if (!existsSync(robotsPath)) fail("robots.txt: missing from Pages artifact");
   else {

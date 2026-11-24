@@ -1,4 +1,8 @@
+.husky/** linguist-detectable=false
 examples/** linguist-detectable=false
 scripts/** linguist-detectable=false
 site/** linguist-detectable=false
 test/** linguist-detectable=false
+/commitlint.config.js linguist-detectable=false
+/eslint.config.mjs linguist-detectable=false
+/project.config.js linguist-detectable=false
